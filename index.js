@@ -26,6 +26,11 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
     agent.add(`I didn't understand`);
     agent.add(`I'm sorry, can you try again?`);
   }
+
+  function question(agent) {
+    agent.add('question about?')
+  }
+  
   function HandlerSavetoDB(agent){
       const text = agent.parameters.text;
       return admin.database().ref('data').set({
@@ -46,6 +51,7 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
+  intentMap.set('Question', )
   intentMap.set('SavetoDB', HandlerSavetoDB);
   intentMap.set('ReadfromDb', HandlerReadfromDb);
   agent.handleRequest(intentMap);
