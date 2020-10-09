@@ -42,12 +42,19 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
           }
         });
     }
+
+   function userInput(agent) {
+   let user_input = agent.query;
+ //test it
+    agent.add(`นี่คือ user_input${user_input}`);
+}
   
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
   intentMap.set('SavetoDB', HandlerSavetoDB);
   intentMap.set('ReadfromDb', HandlerReadfromDb);
+  intentMap.set('StoreInput', userInput);
   agent.handleRequest(intentMap);
   
   //fb
@@ -58,7 +65,7 @@ const fbGraph = {
   get: promisify(graph.get)
 };
 
-graph.setAccessToken("EAAvDZBKkHOuoBAMvDoPDAFFP8OHvKOgTBZAE6BSoaIAasJZBMNGWTphiiTZCftXLcRgx2JZAAoSJXZB0BuNMwE6Gz7hEOZBOArr85xLf0qFVZCwnZCdJOVQahxUiiJrUL8ZAbLlSIOTEulL25Wq9UI2ZAED65LPKEtYRGX0Sj35pq5FRwZDZD");  // <--- your facebook page token
+/*graph.setAccessToken("EAAvDZBKkHOuoBAMvDoPDAFFP8OHvKOgTBZAE6BSoaIAasJZBMNGWTphiiTZCftXLcRgx2JZAAoSJXZB0BuNMwE6Gz7hEOZBOArr85xLf0qFVZCwnZCdJOVQahxUiiJrUL8ZAbLlSIOTEulL25Wq9UI2ZAED65LPKEtYRGX0Sj35pq5FRwZDZD");  // <--- your facebook page token
 graph.setVersion("3.2");
  
 // gets profile from facebook
@@ -82,13 +89,9 @@ graph.setVersion("3.2");
         reject( err );
       });
   });
-} 
+} */
   
 
-  function userInput(agent) {
-   let user_input = agent.query;
- //test it
-   agent.add(user_input);
-}
+ 
 
 });
