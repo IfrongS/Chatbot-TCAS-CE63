@@ -7,8 +7,8 @@ const {WebhookClient} = require('dialogflow-fulfillment');
 const {Card, Suggestion} = require('dialogflow-fulfillment');
 
 admin.initializeApp({
-    credential : admin.credential.applicationDefault(),
-      databaseURL : 'ws://chatbot-pdbp.firebaseio.com/'
+		credential : admin.credential.applicationDefault(),
+  		databaseURL : 'ws://chatbot-pdbp.firebaseio.com/'
 });
  
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
@@ -26,33 +26,69 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
     agent.add(`I didn't understand`);
     agent.add(`I'm sorry, can you try again?`);
   }
-
-  function question(agent) {
-    agent.add('question about?')
-  }
-  
-  function HandlerSavetoDB(agent){
+	function HandlerSavetoDB(agent){
       const text = agent.parameters.text;
       return admin.database().ref('data').set({
-          user_name: 'user1',
-          user_input:text
+        	user_name: 'user1',
+        	user_input:text
       });
     }
   
-    function HandlerReadfromDb(agent){
-    return admin.database().ref('data').once('value').then((snapshot) =>  {
+  	function HandlerReadfromDb(agent){
+		return admin.database().ref('data').once('value').then((snapshot)	=>	{
           const value = snapshot.child('user_input').val();
           if(value !== null){
-              agent.add(`this is value from db ${value}`) ;
+            	agent.add(`this is value from db ${value}`) ;
           }
         });
     }
-
+  
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  intentMap.set('Question', )
   intentMap.set('SavetoDB', HandlerSavetoDB);
   intentMap.set('ReadfromDb', HandlerReadfromDb);
   agent.handleRequest(intentMap);
+  
+  //fb
+  const { promisify } = require('util');
+let graph = require('fbgraph'); // facebook graph library
+
+const fbGraph = {
+  get: promisify(graph.get)
+};
+
+graph.setAccessToken("EAAvDZBKkHOuoBAMvDoPDAFFP8OHvKOgTBZAE6BSoaIAasJZBMNGWTphiiTZCftXLcRgx2JZAAoSJXZB0BuNMwE6Gz7hEOZBOArr85xLf0qFVZCwnZCdJOVQahxUiiJrUL8ZAbLlSIOTEulL25Wq9UI2ZAED65LPKEtYRGX0Sj35pq5FRwZDZD");  // <--- your facebook page token
+graph.setVersion("3.2");
+ 
+// gets profile from facebook
+// user must have initiated contact for sender id to be available
+// returns: facebook profile object, if any
+  
+ function getFacebookProfile(agent) {
+  return new Promise( (resolve, reject) => {
+    let ctx = agent.context.get('generic');
+    let fbSenderID = ctx ? ctx.parameters.facebook_sender_id : undefined;
+
+    console.log('FACEBOOK SENDER ID: ' + fbSenderID);
+
+    fbGraph.get( fbSenderID )
+      .then( payload => {
+        console.log('all fine: ' + payload);
+        resolve( payload );
+      })
+      .catch( err => {
+        console.warn( err );
+        reject( err );
+      });
+  });
+} 
+  
+
+  function userInput(agent) {
+   let user_input = agent.query;
+ //test it
+   agent.add(user_input);
+}
+
 });
