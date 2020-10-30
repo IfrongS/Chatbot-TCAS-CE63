@@ -9,27 +9,31 @@ const server = app.listen(process.env.PORT || 5000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 });
 
-
-
-
 const request = require('request');
+
 function sendMessage(event) {
   let sender = event.sender.id;
   let text = event.message.text;
 
+
+  
+ 
+
+
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token: EAAvDZBKkHOuoBAByjZC7HNLEdSwoShq6fGz4CQMJfjCs6fyDoO8p59StxM8VS2B2N3zqOGqhpCUZBRDpnY5MOeIHdbOcDZC6OoKqb7XHNlP33yTj6qpX49z1Wzpt41Fa1yDQdIq5JOtKBW7sE23Yv15aTzieTy65YCaEMwFfJAZDZD},
+    
+    url: "https://graph.facebook.com/v8.0/me/messages?access_token=EAAvDZBKkHOuoBAA8ZArDU956J3kXChuml6TduQ1pcgnuDCnZCp3ZCJEWSXiQ8ZAgZCSnnPXIQAgfhXhYyvv9W1EebcnaRc3nZCAxZCVL6NoxJ8Ugo6mt4BcdGZCUbD1yZB1cV2YPM4ejWqvPCm27DqPUCsq78UbWhmcb8kZBcww0kD6zgZDZD",
+    //qs: {access_token: EAAvDZBKkHOuoBAByjZC7HNLEdSwoShq6fGz4CQMJfjCs6fyDoO8p59StxM8VS2B2N3zqOGqhpCUZBRDpnY5MOeIHdbOcDZC6OoKqb7XHNlP33yTj6qpX49z1Wzpt41Fa1yDQdIq5JOtKBW7sE23Yv15aTzieTy65YCaEMwFfJAZDZD},
     method: 'POST',
     json: {
       recipient: {id: sender},
-      message: {text: text}
+      message: {text:"Bot said: " + text}
     }
   }, function (error, response) {
     if (error) {
         console.log('Error sending message: ', error);
     } else if (response.body.error) {
-        console.log('Error: ', response.body.error);
+        console.log('Error body: ', response.body.error);
     }
   });
 }
@@ -47,7 +51,7 @@ app.get('/', (req, res) => {
 
   
   /* Handling all messenges */
-  app.post('/webhook', (req, res) => {
+  app.post('/', (req, res) => {
     console.log(req.body);
     if (req.body.object === 'page') {
       req.body.entry.forEach((entry) => {
