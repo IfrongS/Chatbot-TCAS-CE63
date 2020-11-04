@@ -5,16 +5,20 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
+
+
 const server = app.listen(process.env.PORT || 5000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 });
 
 const request = require('request');
 
+
 function sendMessage(event) {
   let sender = event.sender.id;
   let text = event.message.text;
-  let username = event.message.text;
+ 
 
   request({
     
@@ -23,7 +27,7 @@ function sendMessage(event) {
     method: 'POST',
     json: {
       recipient: {id: sender},
-      message: {text:"Bot said: " + text }
+      message: {text:"Bot said: Hello " + text }
     }
   }, function (error, response) {
     if (error) {
@@ -54,8 +58,9 @@ app.get('/', (req, res) => {
         entry.messaging.forEach((event) => {
           if (event.message && event.message.text) {
             //sendMessage(event);
+            //sendFBMessage(event);
             getName(event);
-            //console.log(event.sender.id);
+            //console.log(event.timestamp);
           }
         });
       });
@@ -67,11 +72,16 @@ app.get('/', (req, res) => {
   function getName(event){
     var sender = event.sender.id
     let token = "EAAvDZBKkHOuoBADNmfwWxuZBJJJkZBcqcH2VXtXcfx67gAf5CPocGzoAhASh6whmKscC6AW7IVIbD2AKHfz7ipBijuZBvQ5UciLXUdCSD0vk6nPdPOwvHcjIfeemoMLGdYwZAlIZAoEDgZCBkynlIBxZAu3UwdPSaM5BGWUZACTZB69wZDZD"
+    
+    let dateFB = event.timestamp;
+    let new_date = new Date(dateFB*1000);
+    let current_date = new Date();
+
     request({
       url: "https://graph.facebook.com/v8.0/" + sender,
       qs: {
           access_token : token,
-          fields: "first_name"
+          fields: "first_name,last_name,profile_pic"
       },
       
 
@@ -80,9 +90,16 @@ app.get('/', (req, res) => {
       json: true,
       time: true
     }, 
-    function (error, response, faceUserInfo) {
-      console.log("faceUserInfo", faceUserInfo);
-      let name = faceUserInfo.first_name
+    function (error, response, body) {
+      console.log("faceUserInfo", body);
+      let name = body.first_name
       console.log("Name of User : ", name);
+      console.log('Post: ' + current_date );
+     
+      
     });
   }
+
+
+
+  
