@@ -8,6 +8,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
+
+
+
 const server = app.listen(process.env.PORT || 5000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 });
@@ -94,12 +97,48 @@ app.get('/', (req, res) => {
       console.log("faceUserInfo", body);
       let name = body.first_name
       console.log("Name of User : ", name);
-      console.log('Post: ' + current_date );
+      console.log('Date: ' + current_date );
      
       
     });
   }
 
 
+  /*const apiaiApp = require('apiai')(CLIENT_ACCESS_TOKEN);
+
+  function sendMessage2(event) {
+    let sender = event.sender.id;
+    let text = event.message.text;
+  
+    let apiai = apiaiApp.textRequest(text, {
+      sessionId: 'tabby_cat' // use any arbitrary id
+    });
+  
+    apiai.on('response', (response) => {
+      let aiText = response.result.fulfillment.speech;
+
+        request({
+          url: 'https://graph.facebook.com/v8.0/me/messages',
+          qs: {access_token: "EAAvDZBKkHOuoBADNmfwWxuZBJJJkZBcqcH2VXtXcfx67gAf5CPocGzoAhASh6whmKscC6AW7IVIbD2AKHfz7ipBijuZBvQ5UciLXUdCSD0vk6nPdPOwvHcjIfeemoMLGdYwZAlIZAoEDgZCBkynlIBxZAu3UwdPSaM5BGWUZACTZB69wZDZD"},
+          method: 'POST',
+          json: {
+            recipient: {id: sender},
+            message: {text: aiText}
+           }
+    },  (error, response) => {
+      if (error) {
+          console.log('Error sending message: ', error);
+      } else if (response.body.error) {
+          console.log('Error: ', response.body.error);
+      }
+    });
+    });
+  
+    apiai.on('error', (error) => {
+      console.log(error);
+    });
+  
+    apiai.end();
+  }*/
 
   
