@@ -1,10 +1,10 @@
-
 'use strict';
  
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const {WebhookClient} = require('dialogflow-fulfillment');
 const {Card, Suggestion} = require('dialogflow-fulfillment');
+
 
 admin.initializeApp({
 		credential : admin.credential.applicationDefault(),
@@ -27,21 +27,34 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
     agent.add(`I'm sorry, can you try again?`);
   }
 	function HandlerSavetoDB(agent){
-      const text = agent.parameters.text;
-      return admin.database().ref('data').set({
-        	user_name: 'user1',
-        	user_input:text
+     // const order = agent.context.get('SavetoDB');//เพิ่ม
+      const user_input = agent.parameters.user_input;
+      const user_name = agent.parameters.user_name;
+      const time = new Date();
+     // let current_date = admin.database.Timestamp();
+       return admin.database().ref("data").push({
+        	user_input: user_input,
+        	user_name: user_name,
+        	Timestamp:' '+time,
+         	//TIME :current_date ,
+        	status: 'not trained'
+            
+      });
+    }
+  function TB(agent){
+     // const order = agent.context.get('SavetoDB');//เพิ่ม
+      
+      
+      agent.add('เวลา');
+    //  agent.add(`current_date = `+ current_date );
+      return admin.database().ref("data").push({
+        	
+        	Timestamp:'TIME',
+        	status: 'not trained'
+            
       });
     }
   
-  	function HandlerReadfromDb(agent){
-		return admin.database().ref('data').once('value').then((snapshot)	=>	{
-          const value = snapshot.child('user_input').val();
-          if(value !== null){
-            	agent.add(`this is value from db ${value}`) ;
-          }
-        });
-    }
 
    function userInput(agent) {
    let user_input = agent.query;
@@ -52,18 +65,18 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  intentMap.set('SavetoDB', HandlerSavetoDB);
-  intentMap.set('ReadfromDb', HandlerReadfromDb);
+  intentMap.set('SavetoDB - confirm', HandlerSavetoDB);
+  intentMap.set('TEST', TB);
   intentMap.set('StoreInput', userInput);
   agent.handleRequest(intentMap);
   
   //fb
-  const { promisify } = require('util');
-let graph = require('fbgraph'); // facebook graph library
+//  const { promisify } = require('util');
+//let graph = require('fbgraph'); // facebook graph library
 
-const fbGraph = {
-  get: promisify(graph.get)
-};
+//const fbGraph = {
+//  get: promisify(graph.get)
+//};
 
 /*graph.setAccessToken("EAAvDZBKkHOuoBAMvDoPDAFFP8OHvKOgTBZAE6BSoaIAasJZBMNGWTphiiTZCftXLcRgx2JZAAoSJXZB0BuNMwE6Gz7hEOZBOArr85xLf0qFVZCwnZCdJOVQahxUiiJrUL8ZAbLlSIOTEulL25Wq9UI2ZAED65LPKEtYRGX0Sj35pq5FRwZDZD");  // <--- your facebook page token
 graph.setVersion("3.2");
@@ -76,9 +89,7 @@ graph.setVersion("3.2");
   return new Promise( (resolve, reject) => {
     let ctx = agent.context.get('generic');
     let fbSenderID = ctx ? ctx.parameters.facebook_sender_id : undefined;
-
     console.log('FACEBOOK SENDER ID: ' + fbSenderID);
-
     fbGraph.get( fbSenderID )
       .then( payload => {
         console.log('all fine: ' + payload);
@@ -91,7 +102,4 @@ graph.setVersion("3.2");
   });
 } */
   
-
- 
-
 });
