@@ -3,9 +3,9 @@
 
 ### Download
 
-Download CHATBOT.zip from here ()
+Download from here ()
 
 
 ### Support or Contact
 
-(https://www.facebook.com/ChatbotTCAS)
+[Chatbot TCAS CE63 Page](https://www.facebook.com/ChatbotTCAS)
